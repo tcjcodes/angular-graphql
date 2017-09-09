@@ -12,6 +12,8 @@ import { provideClient } from './client';
 import { SignupComponent } from './user/signup.component';
 import { LoginComponent } from './user/login.component';
 import { AuthService } from './auth/auth.service';
+import { LoggedInGuard } from './auth/logged-in.guard';
+import { TokenGuard } from './auth/token.guard';
 
 @NgModule({
     declarations: [
@@ -32,7 +34,7 @@ import { AuthService } from './auth/auth.service';
         ApolloModule.forRoot(provideClient)
     ],
     bootstrap: [AppComponent],
-    providers: [AuthService]
+    providers: [AuthService, TokenGuard, LoggedInGuard]
 })
 export class AppModule {
 }

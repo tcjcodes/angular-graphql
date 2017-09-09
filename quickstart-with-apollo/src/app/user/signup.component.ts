@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { Apollo } from 'apollo-angular';
 
 import { AuthService } from '../auth/auth.service';
 
@@ -11,7 +9,6 @@ import { AuthService } from '../auth/auth.service';
             <h1>Sign Up</h1>
             <hr>
             <input
-                    type="text"
                     class="form-control"
                     placeholder="Name"
                     [(ngModel)]="name"
@@ -19,7 +16,7 @@ import { AuthService } from '../auth/auth.service';
                     required
             />
             <input
-                    type="text"
+                    type="email"
                     class="form-control"
                     placeholder="E-mail"
                     [(ngModel)]="email"
@@ -46,9 +43,7 @@ export class SignupComponent {
     // emailSubscription = true;
 
     constructor(
-        private router: Router,
         private AuthService: AuthService,
-        private apollo: Apollo
     ) { }
 
     signUp(): void {

@@ -8,7 +8,7 @@ import { AuthService } from '../auth/auth.service';
           <h1>Log In</h1>
           <hr>
           <input
-                  type="text"
+                  type="email"
                   class="form-control"
                   placeholder="E-mail"
                   [(ngModel)]="email"
@@ -24,7 +24,7 @@ import { AuthService } from '../auth/auth.service';
           />
           <button
                   (click)="submit()"
-          >Submitl</button>
+          >Submit</button>
       </div>
   `,
   styles: []
