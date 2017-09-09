@@ -38,7 +38,7 @@ export class AuthService {
         this.router.navigate(['/']);
     }
 
-    private setLoggedIn(value: boolean) {
+    setLoggedIn(value: boolean) {
         this.loggedIn$.next(value);
         this.loggedIn = value;
     }

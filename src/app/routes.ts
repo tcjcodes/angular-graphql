@@ -12,10 +12,10 @@ export const routes: Routes = [
         path: '',
         canActivate: [TokenGuard],
         children: [
-            { path: '', component: FeedComponent },
             { path: 'create', component: NewPostComponent, canActivate: [LoggedInGuard] },
+            { path: 'signup', component: SignupComponent },
+            { path: 'login', component: LoginComponent },
+            { path: '', component: FeedComponent },
         ]
     },
-    { path: 'signup', component: SignupComponent },
-    { path: 'login', component: LoginComponent }
 ];

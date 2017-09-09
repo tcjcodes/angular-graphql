@@ -10,7 +10,6 @@ import gql from 'graphql-tag';
         <div>
             <h1>New Post</h1>
             <input
-                    type="text"
                     class="form-control"
                     id="descriptionInput"
                     placeholder="Description"
@@ -19,7 +18,6 @@ import gql from 'graphql-tag';
                     required
             />
             <input
-                    type="text"
                     class=""
                     id="urlInput"
                     placeholder="Url"

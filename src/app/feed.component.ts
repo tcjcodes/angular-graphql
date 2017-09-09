@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Subscription } from 'rxjs/Subscription';
 
 import 'rxjs/add/operator/toPromise';
 import { AuthService } from './auth/auth.service';
 import gql from 'graphql-tag';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 const AllPostsQuery = gql`
   query allPosts {
@@ -36,16 +37,9 @@ const AllPostsQuery = gql`
                 <div class="w-100" [ngStyle]="setImage(post.imageUrl)"></div>
                 <div class="pt3">
                     {{post.description}}&nbsp;
-                    <span class='red f6 pointer dim' (click)="handleDelete(post.id)">Delete</span>
+                    <span *ngIf="auth.loggedIn" class='red f6 pointer dim' (click)="handleDelete(post.id)">Delete</span>
                 </div>
             </div>
-            <!--<div class="pa3 bg-black-05 ma3" *ngFor="let user of allPosts">
-                <div class="w-100" [ngStyle]="setImage(post.imageUrl)"></div>
-                <div class="pt3">
-                    {{post.description}}&nbsp;
-                    <span class='red f6 pointer dim' (click)="handleDelete(post.id)">Delete</span>
-                </div>
-            </div>-->
         </div>
     `,
     host: { 'style': 'width: 100%; display: flex; justify-content: center;' }
@@ -94,12 +88,38 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.allPostsSub = this.apollo.watchQuery({
+        const queryObservable = this.apollo.watchQuery({
             query: AllPostsQuery
-        }).subscribe(({ data, loading }: any) => {
+        });
+        this.allPostsSub = queryObservable.subscribe(({ data, loading }: any) => {
             this.allPosts = data.allPosts;
             this.loading = loading;
         });
+
+        // Subscriptions
+        const wsClient = new SubscriptionClient('wss://subscriptions.us-west-2.graph.cool/v1/cj79ruij201pj0107d4v0pnsl', {
+            timeout: 10000,
+            reconnect: true
+        });
+
+
+        wsClient.subscribe({
+            query: `subscription {
+        Post(filter: {
+          mutation_in: [CREATED, UPDATED, DELETED]
+        }) {
+          node {
+            id
+            imageUrl
+            description
+          }
+        }
+      }`,
+            variables: null
+        }, (err, res) => {
+            err && console.error(err);
+            queryObservable.refetch();
+        })
     }
 
     ngOnDestroy() {

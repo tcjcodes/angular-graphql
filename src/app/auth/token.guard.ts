@@ -1,5 +1,5 @@
 import { Apollo } from 'apollo-angular';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { userQuery } from '../user_gql';
 import { AuthService } from './auth.service';
 import { Injectable } from '@angular/core';
@@ -7,12 +7,13 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class TokenGuard implements CanActivate {
     constructor(private auth: AuthService,
-                private router: Router,
+                // private router: Router,
                 private apollo: Apollo) {
     }
 
     /**
-     * Check for token
+     * Check for token, pre-activate
+     * @return true always
      */
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
         return this.apollo.query({
@@ -22,12 +23,10 @@ export class TokenGuard implements CanActivate {
             .toPromise()
             .then((result: any) => {
                 const valid = !!(result.data.user && result.data.user.id);
-                if (valid) {
-                    return true;
+                if (!valid) {
+                    this.auth.setLoggedIn(false);
                 }
-                this.auth.redirectUrl = state.url;
-                this.router.navigate(['/login']);
-                return false;
+                return true;
             })
             .catch((e) => {
                 console.error(e);
